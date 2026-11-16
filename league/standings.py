@@ -115,3 +115,4 @@ class StandingsManager:
         self.initialize_table(teams)
 
         return self.table
+
