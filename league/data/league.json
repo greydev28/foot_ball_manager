@@ -1,8 +1,47 @@
 {
     "team": [
-        "arsenal",
-        "chelsea",
-        "mancity"
+        "Arsenal",
+        "Chelsea",
+        "Madrid",
+        "Barcelona"
     ],
-    "fixtures": []
+    "fixtures": [
+        {
+            "id": "F001",
+            "home_team": "Arsenal",
+            "away_team": "Chelsea",
+            "status": "pending",
+            "home_score": 2
+        },
+        {
+            "id": "F002",
+            "home_team": "Arsenal",
+            "away_team": "Madrid",
+            "status": "pending"
+        },
+        {
+            "id": "F003",
+            "home_team": "Arsenal",
+            "away_team": "Barcelona",
+            "status": "pending"
+        },
+        {
+            "id": "F004",
+            "home_team": "Chelsea",
+            "away_team": "Madrid",
+            "status": "pending"
+        },
+        {
+            "id": "F005",
+            "home_team": "Chelsea",
+            "away_team": "Barcelona",
+            "status": "pending"
+        },
+        {
+            "id": "F006",
+            "home_team": "Madrid",
+            "away_team": "Barcelona",
+            "status": "pending"
+        }
+    ]
 }

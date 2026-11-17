@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from league.teams import TeamManager
+from teams import TeamManager
 import re
 class LeagueStorage:
     def __init__(self,file_path):
@@ -15,6 +15,53 @@ class LeagueStorage:
             json.dump(data,file, indent = 4)
         return "league data save successfully"
     
+    def validate_fixtures(self, fixtures, teams):
+        for fixture in fixtures:
+            required_keys = ["id", "home_team", "away_team", "status"]
+            if not isinstance(fixture, dict):
+                raise ValueError("Each fixture must be a dictionary")
+                
+            for key in required_keys:
+                if key not in fixture:
+                    raise ValueError(f"Fixture is missing {key}")
+            if fixture["home_team"] not in teams:
+                raise ValueError("Home team is not registered")
+            if fixture["away_team"] not in teams:
+                raise ValueError("Away team is not registered")
+            if fixture["status"] not in ["pending", "played"]:
+                 raise ValueError("Invalid fixture status")
+               
+            if fixture["status"] == "pending":
+                print("reached")
+                if "home_score" in fixture or "away_score" in fixture:
+                    raise ValueError("Pending fixtures cannot have scores")
+            if fixture["status"] == "played":
+                if "home_score" not in fixture or "away_score" not in fixture:
+                    raise ValueError("Played fixtures must have scores")
+                home_score = fixture["home_score"]
+                away_score = fixture["away_score"]
+
+            if type(home_score) is not int or home_score < 0:
+                raise ValueError("Invalid home score")
+
+            if type(away_score) is not int or away_score < 0:
+                raise ValueError("Invalid away score")
+        return True
+    def validate_fixtures_id(self,fixtures):
+        fixture_ids = set()
+        for fixture in fixtures:
+            if fixture["id"] in fixture_ids:
+                raise ValueError("Duplicate fixure ID")
+            fixture_ids.add(fixture["id"])
+            if fixture["home_team"] == fixture["away_team"]:
+                raise ValueError("A team cannot play against itself")
+            if not re.fullmatch(r"F\d{3}", fixture["id"]):
+                raise ValueError("Invalid fixture ID format")
+    def validate_fixture_count(self, fixtures, teams):
+        expected_count = len(teams) * (len(teams) - 1) // 2
+        if expected_count != len(fixtures):
+            raise ValueError("Incorrect number of fixtures")
+        return True
     def validate_data(self, data):
         if not isinstance(data, dict):
             raise ValueError("League data must be a dictionary")
@@ -46,52 +93,12 @@ class LeagueStorage:
 
         if result != "number of teams is valid":
             raise ValueError(result)
-        return True
-    
-    def validate_fixtures(self, fixtures, teams):
-        for fixture in fixtures:
-            required_keys = ["id", "home_team", "away_team", "status"]
-            if not isinstance(fixture, dict):
-                raise ValueError("Each fixture must be a dictionary")
-                
-            for key in required_keys:
-                if key not in fixture:
-                    raise ValueError(f"Fixture is missing {key}")
-        if fixture["home_team"] not in teams:
-             raise ValueError("Home team is not registered")
-        if fixture["away_team"] not in teams:
-            raise ValueError("Away team is not registered")
-        if fixture["status"] not in ["pending", "played"]:
-            raise ValueError("Invalid fixture status")
-        if fixture["status"] == "pending":
-            if "home_score" in fixture or "away_score" in fixture:
-                raise ValueError("Pending fixtures cannot have scores")
-        if fixture["status"] == "played":
-            if "home_score" not in fixture or "away_score" not in fixture:
-                raise ValueError("Played fixtures must have scores")
-            home_score = fixture["home_score"]
-            away_score = fixture["away_score"]
+          # Validate fixtures
+        self.validate_fixtures(data["fixtures"],data["teams"])
 
-            if type(home_score) is not int or home_score < 0:
-                raise ValueError("Invalid home score")
+        # Validate total fixture count
+        self.validate_fixture_count(data["fixtures"], data["teams"])
 
-            if type(away_score) is not int or away_score < 0:
-                raise ValueError("Invalid away score")
-            
-    def validate_fixtures(self,fixtures):
-        fixture_ids = set()
-        for fixture in fixtures:
-            if fixture["id"] in fixture_ids:
-                raise ValueError("Duplicate fixure ID")
-            fixture_ids.add(fixture["id"])
-            if fixture["home_team"] == fixture["away_team"]:
-                raise ValueError("A team cannot play against itself")
-            if not re.fullmatch(r"F\d{3}", fixture["id"]):
-                raise ValueError("Invalid fixture ID format")
-    def validate_fixture_count(self, fixtures, teams):
-        expected_count = len(teams) * (len(teams) - 1) // 2
-        if expected_count != len(fixtures):
-            raise ValueError("Incorrect number of fixtures")
         return True
             
     def load_data(self):
@@ -108,12 +115,29 @@ class LeagueStorage:
 
 file_path = Path("data/league.json")
 leaguestorage = LeagueStorage(file_path)
-teams = [
-    "arsenal","chelsea","mancity"
+teams = ["Arsenal", "Chelsea", "Madrid", "Barcelona"]
+
+fixtures = [
+    {"id": "F001", "home_team": "Arsenal", "away_team": "Chelsea", "status": "pending", "home_score": 0, "away_score": 0},
+    {"id": "F002", "home_team": "Arsenal", "away_team": "Madrid", "status": "pending", "home_score": 0, "away_score": 0},
+    {"id": "F003", "home_team": "Arsenal", "away_team": "Barcelona", "status": "pending", "home_score": 0, "away_score": 0},
+    {"id": "F004", "home_team": "Chelsea", "away_team": "Madrid", "status": "pending", "home_score": 0, "away_score": 0},
+    {"id": "F005", "home_team": "Chelsea", "away_team": "Barcelona", "status": "pending", "home_score": 0, "away_score": 0},
+    {"id": "F006", "home_team": "Madrid", "away_team": "Barcelona", "status": "pending", "home_score": 0, "away_score": 0}
 ]
-fixtures = []
-leaguestorage.save_data(teams,fixtures)
+
+fixtures[0]["home_score"] = 2
+
+data = {
+    "teams": teams,
+    "fixtures": fixtures
+}
+
+
+
 try: 
-   leaguestorage.load_data()
+    result = leaguestorage.validate_data(data)
 except ValueError as err:
     print(err)
+else:
+    print(result)
