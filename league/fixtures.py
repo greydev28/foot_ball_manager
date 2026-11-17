@@ -55,11 +55,5 @@ class FixtureManager:
         return fixture
 
 
-teams = ["Arsenal","Barcelona","Chelsea"]
-fixture_manager = FixtureManager()
-fixture_manager.generate_fixtures(teams)
-result = fixture_manager.record_result("F001",23,1)
-print(result)
-
 
 

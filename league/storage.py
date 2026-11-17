@@ -7,7 +7,7 @@ class LeagueStorage:
         self.file_path = file_path 
     def save_data(self,teams,fixtures):
         data = {
-            "team": teams,
+            "teams": teams,
             "fixtures": fixtures
         }
         self.file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -32,7 +32,6 @@ class LeagueStorage:
                  raise ValueError("Invalid fixture status")
                
             if fixture["status"] == "pending":
-                print("reached")
                 if "home_score" in fixture or "away_score" in fixture:
                     raise ValueError("Pending fixtures cannot have scores")
             if fixture["status"] == "played":
@@ -41,11 +40,11 @@ class LeagueStorage:
                 home_score = fixture["home_score"]
                 away_score = fixture["away_score"]
 
-            if type(home_score) is not int or home_score < 0:
-                raise ValueError("Invalid home score")
+                if type(home_score) is not int or home_score < 0:
+                    raise ValueError("Invalid home score")
 
-            if type(away_score) is not int or away_score < 0:
-                raise ValueError("Invalid away score")
+                if type(away_score) is not int or away_score < 0:
+                    raise ValueError("Invalid away score")
         return True
     def validate_fixtures_id(self,fixtures):
         fixture_ids = set()
@@ -113,31 +112,3 @@ class LeagueStorage:
         except json.JSONDecodeError as error:
                 raise RuntimeError("json corrupt") from error
 
-file_path = Path("data/league.json")
-leaguestorage = LeagueStorage(file_path)
-teams = ["Arsenal", "Chelsea", "Madrid", "Barcelona"]
-
-fixtures = [
-    {"id": "F001", "home_team": "Arsenal", "away_team": "Chelsea", "status": "pending", "home_score": 0, "away_score": 0},
-    {"id": "F002", "home_team": "Arsenal", "away_team": "Madrid", "status": "pending", "home_score": 0, "away_score": 0},
-    {"id": "F003", "home_team": "Arsenal", "away_team": "Barcelona", "status": "pending", "home_score": 0, "away_score": 0},
-    {"id": "F004", "home_team": "Chelsea", "away_team": "Madrid", "status": "pending", "home_score": 0, "away_score": 0},
-    {"id": "F005", "home_team": "Chelsea", "away_team": "Barcelona", "status": "pending", "home_score": 0, "away_score": 0},
-    {"id": "F006", "home_team": "Madrid", "away_team": "Barcelona", "status": "pending", "home_score": 0, "away_score": 0}
-]
-
-fixtures[0]["home_score"] = 2
-
-data = {
-    "teams": teams,
-    "fixtures": fixtures
-}
-
-
-
-try: 
-    result = leaguestorage.validate_data(data)
-except ValueError as err:
-    print(err)
-else:
-    print(result)
