@@ -1,15 +1,14 @@
-from teams import TeamManager
-from fixtures import FixtureManager
-from standings import StandingsManager
-from storage import LeagueStorage
-from pathlib import Path
+from .teams import TeamManager
+from .fixtures import FixtureManager
+from .standings import StandingsManager
+from .storage import LeagueStorage
 
 class LeagueManager():
     def __init__(self,file_path):
         self.team_manager = TeamManager()
         self.fixture_manager = FixtureManager()
-        self.standings = StandingsManager()
-        self.storage = LeagueStorage(file_path)
+        self.standings_manager = StandingsManager()
+        self.storage_manager = LeagueStorage(file_path)
     def register_team(self,name):
         result = self.team_manager.register_team(name)
         return result
@@ -22,18 +21,58 @@ class LeagueManager():
             raise ValueError(result)
 
         return self.fixture_manager.generate_fixtures(teams)
+
+    def initialize_standings(self):
+        teams = self.team_manager.teams
+        return self.standings_manager.initialize_table(teams)
+    def display_standing(self):
+        result = self.standings_manager.display_standings()
+        return result
     
+    def record_result(self, fixture_id, home_score, away_score):
+        fixture = self.fixture_manager.record_result(
+            fixture_id,
+            home_score,
+            away_score
+        )
 
-file_path = Path("data/league.json")
-leaguemanger = LeagueManager(file_path)
+        self.standings_manager.reset_standings(
+            self.team_manager.teams
+        )
 
-leaguemanger.register_team("Arsenal")
-leaguemanger.register_team("Chelsea")
-leaguemanger.register_team("Man united")
-leaguemanger.register_team("Manchester city")
-leaguemanger.register_team("Lechester")
-leaguemanger.register_team("Wolves")
+        for match in self.fixture_manager.fixtures:
+            if match["status"] == "played":
+                self.standings_manager.update_standings(match)
 
-fixtures = leaguemanger.generate_fixtures()
-for fixture in fixtures:
-    print(fixture)
+        return fixture
+    def display_fixtures(self):
+        return self.fixture_manager.display_fixtures()  
+
+    def save_league(self):
+        teams = self.team_manager.teams
+        fixtures = self.fixture_manager.fixtures
+
+        return self.storage_manager.save_data(teams, fixtures)  
+
+    def load_league(self):
+        data = self.storage_manager.load_data()
+
+        self.team_manager.teams = data["teams"]
+        self.fixture_manager.fixtures = data["fixtures"]
+        
+        self.fixture_manager.counter = len(self.fixture_manager.fixtures) + 1
+
+        self.standings_manager.reset_standings(
+            self.team_manager.teams
+        )
+
+        for fixture in self.fixture_manager.fixtures:
+            if fixture["status"] == "played":
+                self.standings_manager.update_standings(fixture)
+
+        return data
+    def display_teams(self):
+        return self.team_manager.display_teams()
+        
+
+

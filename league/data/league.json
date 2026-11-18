@@ -1,0 +1,106 @@
+{
+    "teams": [
+        "Arsenal",
+        "Chelsea",
+        "Man united",
+        "Manchester city",
+        "Lechester",
+        "Wolves"
+    ],
+    "fixtures": [
+        {
+            "id": "F001",
+            "home_team": "Arsenal",
+            "away_team": "Chelsea",
+            "status": "played",
+            "home_score": 4,
+            "away_score": 0
+        },
+        {
+            "id": "F002",
+            "home_team": "Arsenal",
+            "away_team": "Man united",
+            "status": "played",
+            "home_score": 3,
+            "away_score": 0
+        },
+        {
+            "id": "F003",
+            "home_team": "Arsenal",
+            "away_team": "Manchester city",
+            "status": "pending"
+        },
+        {
+            "id": "F004",
+            "home_team": "Arsenal",
+            "away_team": "Lechester",
+            "status": "pending"
+        },
+        {
+            "id": "F005",
+            "home_team": "Arsenal",
+            "away_team": "Wolves",
+            "status": "pending"
+        },
+        {
+            "id": "F006",
+            "home_team": "Chelsea",
+            "away_team": "Man united",
+            "status": "pending"
+        },
+        {
+            "id": "F007",
+            "home_team": "Chelsea",
+            "away_team": "Manchester city",
+            "status": "pending"
+        },
+        {
+            "id": "F008",
+            "home_team": "Chelsea",
+            "away_team": "Lechester",
+            "status": "pending"
+        },
+        {
+            "id": "F009",
+            "home_team": "Chelsea",
+            "away_team": "Wolves",
+            "status": "pending"
+        },
+        {
+            "id": "F010",
+            "home_team": "Man united",
+            "away_team": "Manchester city",
+            "status": "pending"
+        },
+        {
+            "id": "F011",
+            "home_team": "Man united",
+            "away_team": "Lechester",
+            "status": "pending"
+        },
+        {
+            "id": "F012",
+            "home_team": "Man united",
+            "away_team": "Wolves",
+            "status": "pending"
+        },
+        {
+            "id": "F013",
+            "home_team": "Manchester city",
+            "away_team": "Lechester",
+            "status": "pending"
+        },
+        {
+            "id": "F014",
+            "home_team": "Manchester city",
+            "away_team": "Wolves",
+            "status": "pending"
+        },
+        {
+            "id": "F015",
+            "home_team": "Lechester",
+            "away_team": "Wolves",
+            "status": "pending"
+        }
+    ]
+}

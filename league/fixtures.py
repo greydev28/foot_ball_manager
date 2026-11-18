@@ -25,7 +25,7 @@ class FixtureManager:
             print("No fixtures have been generated")
             return
         print("\nLEAGUE FIXTURES")
-        print("**" * 70)
+        print("*" * 40)
         for fixture in self.fixtures:
             print(
                 f"{fixture["id"]} | "
